@@ -13,7 +13,7 @@ export async function chatJson(agent: Agent, system: string, user: string): Prom
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: process.env.LLM_MODEL || "gemini-2.5-flash",
+      model: process.env.LLM_MODEL || "gemini-3.8-flash",
       temperature: 0.2,
       response_format: { type: "json_object" },
       messages: [
