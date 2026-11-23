@@ -1,0 +1,32 @@
+:root { --bg: #f6f7f9; --card: #fff; --line: #e3e6ea; --text: #1d2330; --muted: #6b7280;
+  --orchestrator: #6d4ce0; --develop: #0f7bd6; --testing: #d9480f; --system: #6b7280; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #111418; --card: #1a1e24; --line: #2b313a; --text: #e6e8eb; --muted: #9aa3ae; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 15px; margin: 0 0 10px; }
+.muted { color: var(--muted); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.stack > * + * { margin-top: 14px; }
+textarea, select { width: 100%; font: inherit; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+button { font: inherit; padding: 8px 14px; border: 0; border-radius: 8px; background: var(--orchestrator); color: #fff; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+.badge { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 12px; border: 1px solid currentColor; white-space: nowrap; }
+.agent { border-top: 4px solid var(--c); }
+.agent .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: inline-block; }
+.agent.active .dot { background: var(--c); animation: pulse 1s infinite alternate; }
+@keyframes pulse { to { opacity: .3; } }
+.log { list-style: none; padding: 0; margin: 8px 0 0; max-height: 220px; overflow: auto; font-size: 13px; }
+.log li { padding: 4px 0; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 8px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.tablewrap { overflow-x: auto; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 4px 0 0; font-size: 12px; color: var(--testing); }
+iframe { width: 100%; height: 420px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.tabs button { background: transparent; color: var(--text); border: 1px solid var(--line); padding: 4px 10px; }
+.tabs button[aria-pressed="true"] { background: var(--develop); color: #fff; border-color: var(--develop); }
