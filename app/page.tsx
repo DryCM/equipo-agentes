@@ -49,11 +49,13 @@ export default function Home() {
       const res = await fetch(`/api/runs/${id}/step`, { method: "POST" }).then((r) => r.json()).catch((e) => ({ ok: false, error: String(e) }));
       await loadDetail(id);
       if (!res.ok) {
-        if (++failures >= 3) { setError(res.error); break; }
-        await new Promise((r) => setTimeout(r, 5000 * failures)); // free tiers rate-limit
+        if (++failures >= 8) { setError(res.error); break; }
+        setError(`Reintentando (${failures}/8): el LLM gratuito está saturado…`);
+        await new Promise((r) => setTimeout(r, 5000 * failures)); // free tiers rate-limit; ~3 min in total
         continue;
       }
       failures = 0;
+      setError(null);
       if (!live(res.status)) break;
       if (res.busy) await new Promise((r) => setTimeout(r, 2000)); // another tab is driving it
     }
