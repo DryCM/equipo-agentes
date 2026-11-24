@@ -33,6 +33,16 @@ npm run dev
 
 Las claves solo viven en variables de entorno; `.env*` está en `.gitignore`.
 
+## Cómo lo he programado
+
+Con Claude Code (app de escritorio). Le pasé el enunciado y fui dirigiendo las decisiones: una máquina de estados con un paso de agente por petición (para encajar en los límites de Vercel y poder reanudar), Turso porque permite usar SQLite en local para las pruebas, y el LLM intercambiable por variables de entorno para no pagar. Claude Code escribió el código y un test de extremo a extremo con agentes simulados (`npm test`) que comprueba el ciclo Testing → Develop; lo probó en el navegador y creó el repositorio, el proyecto de Vercel y la base de datos de Turso desde la terminal.
+
+Al probar en producción salieron dos problemas que se corrigieron:
+- El modelo de Gemini configurado estaba retirado y el plan gratuito devolvía 503/429 a menudo: ahora hay una lista de modelos de reserva y un límite de 300 s por paso.
+- Si el Orquestador ponía «enlazar la página» antes de «crear la página», el chequeo de enlaces rotos de Testing hacía fallar la tarea sin remedio: ahora ese chequeo se hace sobre el resultado final y el Orquestador ordena las tareas por dependencias.
+
+Las claves solo están en las variables de entorno de Vercel, nunca en el repositorio.
+
 ## Limitaciones conocidas
 
 - La app no tiene login: cualquiera con la URL puede lanzar ejecuciones y gastar la cuota gratuita del LLM.
