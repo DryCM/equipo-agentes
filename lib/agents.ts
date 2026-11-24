@@ -55,7 +55,7 @@ export function brokenLinks(files: Files): string[] {
   return issues;
 }
 
-type Task = { id: number; title: string; description: string; acceptance: string; status: string; attempts: number; feedback: string | null };
+type Task = { id: number; idx: number; title: string; description: string; acceptance: string; status: string; attempts: number; feedback: string | null };
 
 // Advances a run by exactly one agent action. The browser calls this in a loop,
 // so no single request runs longer than one LLM call (fits serverless limits).
