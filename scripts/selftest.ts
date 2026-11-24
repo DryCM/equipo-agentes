@@ -23,7 +23,8 @@ assert.equal(status, "done");
 
 const tasks = (await db.execute({ sql: "SELECT status, attempts FROM tasks WHERE run_id = ? ORDER BY idx", args: [id] })).rows;
 assert.deepEqual(tasks.map((t) => t.status), ["done", "done"]);
-assert.equal(tasks[0].attempts, 2, "first task should fail once in Testing, then pass");
+assert.equal(tasks[0].attempts, 1, "link check is deferred while later tasks are open");
+assert.equal(tasks[1].attempts, 2, "last task should fail the link check once, then pass");
 const files = JSON.parse(String((await db.execute({ sql: "SELECT files FROM runs WHERE id = ?", args: [id] })).rows[0].files));
 assert.ok(files["index.html"].includes('href="contacto.html"'));
 assert.deepEqual(brokenLinks(files), []);

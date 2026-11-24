@@ -6,7 +6,7 @@ const MAX_ATTEMPTS = 3;
 const LOCK_MS = 330_000; // longer than the step route's maxDuration
 
 const ORCHESTRATOR = `Eres el Orquestador de un equipo de 3 agentes (Orquestador, Develop, Testing) que modifican una web estática (HTML/CSS, sin JavaScript de servidor).
-Divide la petición del usuario en 1 a 4 tareas de desarrollo pequeñas, concretas y ordenadas. Cada tarea debe poder comprobarse leyendo los archivos.
+Divide la petición del usuario en 1 a 4 tareas de desarrollo pequeñas, concretas y ordenadas: si una tarea depende de otra (p. ej. enlazar una página), la que crea la dependencia va antes. Cada tarea debe poder comprobarse leyendo los archivos.
 Responde SOLO con JSON: {"tasks":[{"title":"...","description":"...","acceptance":["criterio comprobable", "..."]}]}`;
 
 const DEVELOP = `Eres Develop, el desarrollador del equipo. Implementas UNA tarea sobre una web estática (HTML/CSS).
@@ -127,7 +127,9 @@ async function work(runId: string, files: Files) {
   if (task.status === "testing") {
     await db.execute({ sql: "UPDATE runs SET active_agent = 'testing' WHERE id = ?", args: [runId] });
     await log(runId, "testing", `Revisando «${task.title}»`);
-    const auto = brokenLinks(files);
+    // Links may point to pages a later task creates, so the link check only runs on the last open task.
+    const later = (await db.execute({ sql: "SELECT COUNT(*) AS n FROM tasks WHERE run_id = ? AND idx > ? AND status NOT IN ('done','failed')", args: [runId, task.idx] })).rows[0].n;
+    const auto = Number(later) ? [] : brokenLinks(files);
     const out = await chatJson("testing", TESTING, `${taskBlock}\n\nARCHIVOS:\n${filesBlock(files)}`);
     const issues = [...auto, ...(Array.isArray(out.issues) ? out.issues.map(String) : [])];
     const pass = out.pass === true && auto.length === 0;
