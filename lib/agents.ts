@@ -3,7 +3,7 @@ import { chatJson, type Agent } from "./llm.ts";
 import { seedFiles, type Files } from "./seed.ts";
 
 const MAX_ATTEMPTS = 3;
-const LOCK_MS = 120_000;
+const LOCK_MS = 330_000; // longer than the step route's maxDuration
 
 const ORCHESTRATOR = `Eres el Orquestador de un equipo de 3 agentes (Orquestador, Develop, Testing) que modifican una web estática (HTML/CSS, sin JavaScript de servidor).
 Divide la petición del usuario en 1 a 4 tareas de desarrollo pequeñas, concretas y ordenadas. Cada tarea debe poder comprobarse leyendo los archivos.
@@ -153,7 +153,8 @@ async function work(runId: string, files: Files) {
     ],
     "write",
   );
-  await log(runId, "develop", task.feedback ? `Corrigiendo «${task.title}»` : `Empezando «${task.title}»`);
+  if (task.status !== "developing") // a retry after an LLM error: already announced
+    await log(runId, "develop", task.feedback ? `Corrigiendo «${task.title}»` : `Empezando «${task.title}»`);
   const feedback = task.feedback ? `\n\nFALLOS A CORREGIR (de Testing):\n${task.feedback}` : "";
   const out = await chatJson("develop", DEVELOP, `${taskBlock}${feedback}\n\nARCHIVOS ACTUALES:\n${filesBlock(files)}`);
   const changed = (Array.isArray(out.files) ? out.files : []).filter((f: any) => typeof f?.path === "string" && typeof f?.content === "string");

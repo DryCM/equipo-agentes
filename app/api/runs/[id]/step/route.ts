@@ -1,6 +1,6 @@
 import { step } from "@/lib/agents.ts";
 
-export const maxDuration = 60; // one LLM call per request
+export const maxDuration = 300; // one agent action per request (Vercel Hobby max)
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
